@@ -11,14 +11,14 @@ class Order:
 
     @staticmethod
     def insert_batch_new_coupon(coupon_list):
-        sql = """insert into t_user_coupon (mark_id,user_id,start_time,stop_time,use_time,limit_price,coupon_price,coupon_name,coupon_type) 
-        values (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        sql = """insert into t_user_coupon (mark_id,user_id,server_status,start_time,stop_time,use_time,limit_price,coupon_price,coupon_name,coupon_type) 
+        values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         coupon_conn = conn_commons.Commons()
         coupon_conn.insert_batch_db_order(sql, coupon_list)
 
     @staticmethod
     def select_old_order(user_ids_str):
-        sql = "select * from t_order_info where user_mark in %s"
+        sql = "select * from t_order_info where user_mark in %s order by add_time"
         order_conn = conn_commons.Commons()
         return order_conn.select_old_data(sql % user_ids_str, None)
 
@@ -63,3 +63,40 @@ class Order:
                 values (%s,%s,%s,%s,%s)"""
         back_conn = conn_commons.Commons()
         back_conn.insert_batch_db_order(sql, back_list)
+
+    @staticmethod
+    def select_province_group():
+        sql = "SELECT province from t_user_address GROUP BY province"
+        province_conn = conn_commons.Commons()
+        return province_conn.select_db_order(sql, None)
+
+    @staticmethod
+    def update_province(code, name):
+        sql = "update t_user_address set province='%s' where province='%s'"
+        print(sql%(code, name))
+        province_conn = conn_commons.Commons()
+        province_conn.update_db_order(sql%(code, name), None)
+
+    @staticmethod
+    def select_city_group():
+        sql = "SELECT city from t_user_address GROUP BY city"
+        city_conn = conn_commons.Commons()
+        return city_conn.select_db_order(sql, None)
+
+    @staticmethod
+    def update_city(code, name):
+        sql = "update t_user_address set city='%s' where city='%s'"
+        city_conn = conn_commons.Commons()
+        return city_conn.update_db_order(sql%(code, name), None)
+
+    @staticmethod
+    def select_area_group():
+        sql = "SELECT area from t_user_address GROUP BY area"
+        area_conn = conn_commons.Commons()
+        return area_conn.select_db_order(sql, None)
+
+    @staticmethod
+    def update_area(code, name):
+        sql = "update t_user_address set area='%s' where area='%s'"
+        area_conn = conn_commons.Commons()
+        return area_conn.update_db_order(sql%(code, name), None)

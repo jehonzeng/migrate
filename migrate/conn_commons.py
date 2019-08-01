@@ -6,7 +6,7 @@ class Commons:
         self.old_host = 'localhost'
         self.old_user = 'root'
         self.old_passwd = '123456'
-        self.old_db = 't_hands_formal'
+        self.old_db = 't_hands'
 
         self.new_host = 'localhost'
         self.new_user = 'root'

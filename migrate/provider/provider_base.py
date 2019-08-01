@@ -28,5 +28,11 @@ class Base:
         img_conn = conn_commons.Commons()
         return img_conn.select_old_data(sql % goods_ids_str, None)
 
+    @staticmethod
+    def select_area():
+        sql = """SELECT * FROM t_area_info"""
+        area_conn = conn_commons.Commons()
+        return area_conn.select_db_base(sql, None)
+
 if __name__=='__main__':
     pass

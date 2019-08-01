@@ -1,5 +1,6 @@
-from migrate.provider import provider_order
+from migrate.provider import provider_order, provider_base, provider_user
 from migrate import id_handler
+import time
 
 
 class Order:
@@ -16,13 +17,15 @@ class Order:
             user_mark = coupon_row[2]
             create_time = coupon_row[3]
             use_time = coupon_row[4]
-            use_time = use_time
             end_time = coupon_row[5]
+            server_status = 0
+            if use_time is not None:
+                server_status = 1
             limit_size = coupon_row[6]
             coupon_size = coupon_row[7]
             new_coupon_id = id_worker.get_id()
             coupon_id_map[coupon_id] = new_coupon_id
-            new_coupon_list.append((new_coupon_id, user_id_map[user_mark], create_time, end_time,
+            new_coupon_list.append((new_coupon_id, user_id_map[user_mark],server_status, create_time, end_time,
                                     use_time, limit_size / 100.00, coupon_size / 100.00, name, 1))
         provider_order.Order.insert_batch_new_coupon(new_coupon_list)
         return coupon_id_map
@@ -157,3 +160,137 @@ class Order:
             cid = back_row[4]
             new_back_list.append((id_worker.get_id(),order_no,add_time,pay_status,cid))
         provider_order.Order.insert_batch_new_back(new_back_list)
+
+    # @staticmethod
+    # def user_adderss():
+    #     area_info_list = provider_base.Base.select_area()
+    #     area_map = {}
+    #     for area in area_info_list:
+    #         num = area[0]
+    #         name = area[1]
+    #         area_map[name] = num
+    #     province_list = provider_order.Order.select_province_group()
+    #     for address in province_list:
+    #         province = address[0].strip()
+    #         if province == '重庆':
+    #             province = '重庆市'
+    #         if province == '广西壮族':
+    #             province = '广西壮族自治区'
+    #         if province == '新疆':
+    #             province = '新疆维吾尔自治区'
+    #         if province == '内蒙古':
+    #             province = '内蒙古自治区'
+    #         if province in area_map:
+    #             province = area_map[province]
+    #         provider_order.Order.update_province(province, address[0])
+    #     city_list = provider_order.Order.select_city_group()
+    #     for address in city_list:
+    #         city = address[0].strip()
+    #         if city == '重庆':
+    #             city = '重庆市'
+    #         if city in area_map:
+    #             city = area_map[city]
+    #         provider_order.Order.update_city(city, address[0])
+    #     area_list = provider_order.Order.select_area_group()
+    #     for address in area_list:
+    #         area = address[0].strip()
+    #         if area == '龙华民治片区':
+    #             area = '龙华区'
+    #         if area == '宝安中心区':
+    #             area = '宝安区'
+    #         if area == '布吉':
+    #             area = '龙岗区'
+    #         if area == '永川区':
+    #             area = '永川市'
+    #         if area == '郫县':
+    #             area = '郫　县'
+    #         if area == '梅县':
+    #             area = '梅　县'
+    #         if area == '城区':
+    #             area = '城　区'
+    #         if area == '渠县':
+    #             area = '渠　县'
+    #         if area == 'undefined':
+    #             continue
+    #         if area in area_map:
+    #             area = area_map[area]
+    #         provider_order.Order.update_area(area, address[0])
+
+    @staticmethod
+    def user_address(user_id_map):
+        area_info_list = provider_base.Base.select_area()
+        area_map = {}
+        for area in area_info_list:
+            num = area[0]
+            name = area[1]
+            area_map[name] = num
+        id_worker = id_handler.IdWorker()
+        address_list = provider_user.User.select_old_address(str(tuple(user_id_map)))
+        new_address_list = []
+        for address_row in address_list:
+            mark_id = address_row[0]
+            name = address_row[1]
+            phone = address_row[2]
+            province = address_row[3].strip()
+            if province == '重庆':
+                province = '重庆市'
+            if province == '广西壮族':
+                province = '广西壮族自治区'
+            if province == '新疆':
+                province = '新疆维吾尔自治区'
+            if province == '内蒙古':
+                province = '内蒙古自治区'
+            if province in area_map:
+                province = area_map[province]
+            else :
+                continue
+            city = address_row[4].strip()
+            if city == '重庆':
+                city = '重庆市'
+            if city in area_map:
+                city = area_map[city]
+            else :
+                continue
+            area = address_row[5].strip()
+            if area == '龙华民治片区':
+                area = '龙华区'
+            if area == '宝安中心区':
+                area = '宝安区'
+            if area == '布吉':
+                area = '龙岗区'
+            if area == '永川区':
+                area = '永川市'
+            if area == '郫县':
+                area = '郫　县'
+            if area == '梅县':
+                area = '梅　县'
+            if area == '城区':
+                area = '城　区'
+            if area == '渠县':
+                area = '渠　县'
+            if area in area_map:
+                area = area_map[area]
+            else:
+                continue
+            address = address_row[6]
+            user_mark = address_row[7]
+            user_id = None
+            if user_mark in user_id_map:
+                user_id = user_id_map[user_mark]
+            else:
+                continue
+            clint_status = address_row[8]
+            server_status = None
+            default_or = 0
+            if clint_status == -1:
+                server_status = 0
+            elif clint_status == 0:
+                server_status = 1
+            elif clint_status == 1:
+                default_or = 1
+                server_status = 1
+            clint_type = address_row[9]
+            new_address_list.append((
+                                    id_worker.get_id(), name, phone, area, city, province, address, clint_type, user_id,
+                                    None, default_or, server_status))
+        provider_user.User.insert_batch_new_address(new_address_list)

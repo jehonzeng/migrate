@@ -65,6 +65,8 @@ class Goods:
                 type = 1
             elif server_type == 2:
                 type = 0
+            else:
+                continue
             sort = img_row[2]
             goods_mark = img_row[3]
             img_path = img_row[4]
@@ -97,7 +99,6 @@ class Goods:
             if order_mark in order_id_map:
                 order_id = order_id_map[order_mark]
             new_judge_list.append((id_worker.get_id(), goods_id, order_id,user_id, server_status, description, None, add_time, star, sort))
-        print(new_judge_list)
         provider_goods.Goods.insert_batch_new_judge(new_judge_list)
 
     @staticmethod
@@ -205,6 +206,8 @@ class Goods:
                 type = 1
             elif server_type == 2:
                 type = 0
+            else:
+                continue
             sort = img_row[2]
             goods_mark = img_row[3]
             img_path = img_row[4]

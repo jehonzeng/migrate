@@ -93,7 +93,7 @@ class Goods:
 
     @staticmethod
     def insert_batch_new_meal_judge(judge_list):
-        sql = """insert into t_meal_comment (mark_id,order_id,meal_id,user_id,add_time,server_status,description,commentator,star,sort)
+        sql = """insert into t_meal_judge (mark_id,order_id,meal_id,user_id,add_time,server_status,description,commentator,star,sort)
             values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         judge_conn = conn_commons.Commons()
         judge_conn.insert_batch_db_goods(sql, judge_list)
